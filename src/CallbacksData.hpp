@@ -16,9 +16,9 @@ class CallbackData
 	using Strings = std::vector<std::string>;
 
 	public:
-		CallbackData(CommandLineHandler& clh)
+		CallbackData(CommandLineHandler& clh, bool useHistory = true, bool useAllPaths = false)
 		{
-			setExpressions(clh);
+			setExpressions(clh, useHistory, useAllPaths);
 			setColors();
 		}
 
@@ -26,17 +26,23 @@ class CallbackData
 		Strings		getKnownExpressions() const { return _knownExpressions; }
 
 	private:
-		void	setExpressions(CommandLineHandler& clh)
+		void	setExpressions(CommandLineHandler& clh, bool useHistory, bool useAllPaths)
 		{
 			_knownExpressions = {
 				"exit", "quit"
 			};
 
-			auto history = clh.getHistory();
-			_knownExpressions.insert(_knownExpressions.end(), history.rbegin(), history.rend());
-			
-			auto binaries = getPathBinaries();
-			_knownExpressions.insert(_knownExpressions.end(), binaries.rbegin(), binaries.rend());
+			if (useHistory)
+			{
+				auto history = clh.getHistory();
+				_knownExpressions.insert(_knownExpressions.end(), history.rbegin(), history.rend());
+			}
+
+			if (useAllPaths) 
+			{
+				auto binaries = getPathBinaries();
+				_knownExpressions.insert(_knownExpressions.end(), binaries.rbegin(), binaries.rend());
+			}
 		}
 
 		Strings	getPathBinaries()
@@ -97,6 +103,12 @@ class CallbackData
 					{"\\]", cl::BRIGHTMAGENTA},
 					{"\\{", cl::BRIGHTMAGENTA},
 					{"\\}", cl::BRIGHTMAGENTA},
+
+					{"\\>", cl::RED},
+					{"\\<", cl::RED},
+					{"\\|", cl::RED},
+					{"\\;", cl::RED},
+					{"\\&", cl::RED},
 
 					{"color_black", cl::BLACK},
 					{"color_red", cl::RED},

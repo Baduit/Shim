@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #include <replxx.hxx>
 using Replxx = replxx::Replxx;
@@ -11,10 +12,29 @@ using Replxx = replxx::Replxx;
 #include "ReplxxCallback.hpp"
 #include "CallbacksData.hpp"
 
-int main() {
-	BashChild bashChild;
+int main(int argc, char **argv)
+{
+	std::string shellCmd = "bash -sl";
+	bool useHistory = true;
+	bool useAllPaths = false;
+
+	for (int i = 1; i < argc; ++i)
+	{
+		std::string arg = argv[i];
+
+		if (((arg[0] == '-' && std::find(arg.begin(), arg.end(), 's') != arg.end()) || (arg == "--shell")) && i + 1 < argc)
+			shellCmd = argv[i + 1];
+
+		if ((arg[0] == '-' && std::find(arg.begin(), arg.end(), 'N') != arg.end()) || (arg == "--no-history"))
+			useHistory = false;
+		
+		if ((arg[0] == '-' && std::find(arg.begin(), arg.end(), 'p') != arg.end()) || (arg == "--paths"))
+			useAllPaths = true;
+	}
+
+	BashChild bashChild(shellCmd);
 	CommandLineHandler clh;
-	CallbackData cbData(clh);
+	CallbackData cbData(clh, useHistory, useAllPaths);
 
 	auto knownExpressions = cbData.getKnownExpressions();
 	auto regex_color = cbData.getColorations();

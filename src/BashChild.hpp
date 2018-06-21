@@ -6,11 +6,12 @@
 #include <stdexcept>
 #include <sstream>
 #include <signal.h>
+#include <string>
 
 class BashChild
 {
 	public:
-		BashChild()
+		BashChild(const std::string& shell = "bash -sl")
 		{
 			if (pipe(_pipefd) == -1)
 				throw std::runtime_error("Pipe failed");
@@ -24,7 +25,7 @@ class BashChild
 				close(_pipefd[1]);
 				close(0);
 				dup2(_pipefd[0], 0);
-				system("bash -sl");
+				system(shell.c_str());
 				close(_pipefd[0]);
 				exit(EXIT_SUCCESS);
 				close(_pipefd[0]);
