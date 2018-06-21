@@ -63,6 +63,4 @@ int main(int argc, char **argv)
 		}
 	}
 	std::cout << std::endl << "Exiting Shimon" << std::endl;
-
-	return 0;
 }

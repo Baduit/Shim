@@ -13,5 +13,9 @@ set(SRCS
     )
 
 add_executable(Shim ${SRCS})
+
 target_link_libraries(Shim replxx)
 target_link_libraries(Shim stdc++fs)
+
+
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/Shim DESTINATION bin)
