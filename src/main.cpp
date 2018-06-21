@@ -33,7 +33,8 @@ int main(int argc, char **argv)
 	}
 
 	BashChild bashChild(shellCmd);
-	CommandLineHandler clh;
+	std::string historyFilePath = secure_getenv("HOME");
+	CommandLineHandler clh(historyFilePath + "/.shim_history", 1000, 256, 5);
 	CallbackData cbData(clh, useHistory, useAllPaths);
 
 	auto knownExpressions = cbData.getKnownExpressions();

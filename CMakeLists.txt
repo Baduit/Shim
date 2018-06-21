@@ -12,10 +12,10 @@ set(SRCS
     src/main.cpp
     )
 
-add_executable(Shim ${SRCS})
+add_executable(shim ${SRCS})
 
-target_link_libraries(Shim replxx)
-target_link_libraries(Shim stdc++fs)
+target_link_libraries(shim replxx)
+target_link_libraries(shim stdc++fs)
 
 
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/Shim DESTINATION bin)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/shim DESTINATION bin)

@@ -10,7 +10,7 @@ class CommandLineHandler
 	using Strings = std::vector<std::string>;
 
 	public:
-		CommandLineHandler(const std::string& historyFile = "./replxx_history.txt", int maxHistorySize = 1000, int maxLineSize = 256, int maxHintRows = 5): _historyFile(historyFile)
+		CommandLineHandler(const std::string& historyFile, int maxHistorySize, int maxLineSize, int maxHintRows): _historyFile(historyFile)
 		{
 			_rx.install_window_change_handler();
 			_rx.history_load(historyFile);
