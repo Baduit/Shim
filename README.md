@@ -2,6 +2,11 @@
 ## Description
 Shim read line which is interfaced with a shell to offer coloration, hints and auto completion. It is not a new implementation of a shell and you can use any shell you want with it.
 
+## Prerequisites
+It uses some "unistd.h" functions, so it won't work on Windows, but i developed it on a Ubuntu and there's no reason it does not work on any other Unix based distribution.
+You need to have a compiler with C++17 and the file system in the standard library enable(the latest version of g++ and clang++ have it).
+You also have to install this library: https://github.com/AmokHuginnsson/replxx (download it, use cmake to generate the makefile and then "sudo make install" and it is done). 
+
 ## Installation
 Clone or download the repository and then execute the script "install.sh".
 
