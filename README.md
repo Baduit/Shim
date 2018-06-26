@@ -27,6 +27,7 @@ When executed, Shim initializes the replxx library and defines the information u
 - closes the standard input so that conflicts are avoided between the replxx library and the used shell reading on that same input.
 - redirects the read file descriptor of the pipe on the standard input, so that when the main process will write in the pipe it will be read by the shell.
 - start a shell
+
 The main process will read from the standard input, make some line style edition and wait for the user to confirm a line to write it in the pipe. In order to synchronize both process, the main process will also write a command to trigger himself with a signal (SIGUSR1 using the kill command) and then wait until it receives this signal to be sure to wait until the end of the command.
 
 # Future
