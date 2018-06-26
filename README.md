@@ -26,7 +26,7 @@ When Shim is started, the shortcuts are similar to other shells and the commands
 When executed, Shim initializes the replxx library and defines the information used for hints, auto-completion and coloration. It then creates a pipeline (2 linked file descriptors), the main process will be the writer. After it creates a child process which:
 - closes the standard input so that conflicts are avoided between the replxx library and the used shell reading on that same input.
 - redirects the read file descriptor of the pipe on the standard input, so that when the main process will write in the pipe it will be read by the shell.
-- start a shell
+- starts a shell
 
 The main process will read from the standard input, make some line style edition and wait for the user to confirm a line to write it in the pipe. In order to synchronize both process, the main process will also write a command to trigger himself with a signal (SIGUSR1 using the kill command) and then wait until it receives this signal to be sure to wait until the end of the command.
 
@@ -39,7 +39,7 @@ The main process will read from the standard input, make some line style edition
 If you find bugs tell me and I'll try to fix them when I have time.
 
 # Thanks
-This library: https://github.com/AmokHuginnsson/replxx is pretty amazing and i would not have done this without it.
-Noé for the name of the project.
-Erzender for the multiple corrections in this readme.
+- This library: https://github.com/AmokHuginnsson/replxx is pretty amazing and i would not have done this without it.
+- Noé for the name of the project.
+- Erzender for the multiple corrections in this readme.
 
