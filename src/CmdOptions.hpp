@@ -22,6 +22,9 @@ class CmdOptions
 
 			if (_name.find("(") != std::string::npos || _name.find(")") != std::string::npos)
 				return;
+
+			if (_name.find("\"") != std::string::npos || _name.find("'") != std::string::npos || _name.find("`") != std::string::npos)
+				return;
 			
 			_thread = std::thread([&]{
 				system(std::string("man 1 " + this->getName() + " 2>/dev/null | grep - > /tmp/shim_man.txt\n").c_str());

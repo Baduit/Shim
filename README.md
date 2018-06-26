@@ -33,7 +33,6 @@ The main process will read from the standard input, make some line style edition
 # Future
 - Hints/auto-completion more accurate.
 - Coloration of the binaries to differenciate them better.
-- Coloration of the options beginning by - or --
 
 # Bugs
 If you find bugs tell me and I'll try to fix them when I have time.
