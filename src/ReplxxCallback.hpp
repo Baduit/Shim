@@ -60,7 +60,13 @@ C completion(const std::string& context, const std::string& prefix, CompletionDa
 				if (e.compare(0, prefix.size(), prefix) == 0)
 					cbPrefix(e, c);
 		}
-		// use aliases TODO
+		
+		for (const auto& e : data->aliases)
+		{
+			if (prefix.size() >= 2 || (!prefix.empty()))
+				if (e.compare(0, prefix.size(), prefix) == 0)
+					cbPrefix(e, c);
+		}
 	}
 
 	if (bashRole == BashRole::ARG)

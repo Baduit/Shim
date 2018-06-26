@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <string>
 #include <fstream>
+#include <vector>
 
 class BashChild
 {
@@ -83,6 +84,18 @@ class BashChild
 			std::string path;
 			std::getline(pwdFile, path);
 			return path;
+		}
+
+		std::vector<std::string>		getBashAliases()
+		{
+			(*this) << "alias > /tmp/shim_aliases.txt\n";
+			waitEndBashCommand();
+			std::ifstream pwdFile("/tmp/shim_aliases.txt");
+			std::vector<std::string> aliases;
+			std::string alias;
+			while (std::getline(pwdFile, alias))
+				aliases.push_back(alias.substr(6, alias.find("=") - 6));
+			return aliases;
 		}
 
 		const pid_t		getCpid() const { return _cpid; }

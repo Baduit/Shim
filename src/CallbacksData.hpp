@@ -55,6 +55,8 @@ class CallbackData
 				_completionData.history = clh.getHistory();
 			}
 
+			_completionData.aliases = _completionData.bashChild.getBashAliases();
+
 			Strings paths;
 			if (useAllPaths == BinariesPathCompletion::NORMAL)
 				paths = {"/bin", "/usr/bin"};
