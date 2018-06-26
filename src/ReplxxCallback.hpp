@@ -17,25 +17,31 @@ void emplaceBackToContainer(Container& c, const std::string& str)
 		c.emplace_back(str);
 }
 
-// ajouter 2 call backs, une sur le context et une sur le préfix
+template<typename C, typename CbPrefix>
+void	complLocalFile(C& c, const std::string& prefix, CompletionData* data, BashParser::Answer bashCmdInfo, CbPrefix&& cbPrefix)
+{
+	try
+	{
+		for (auto& p: fs::directory_iterator(data->bashChild.getBashCurrentDir() + "/" + bashCmdInfo.path))
+			{
+				std::string filename = p.path().filename().string();
+				if (filename.compare(0, prefix.size(), prefix) == 0)
+					cbPrefix(filename, c);
+			}
+	}
+	catch (...) {}
+}
+
 template<typename C, typename CbPrefix, typename CbContext>
 C completion(const std::string& context, const std::string& prefix, CompletionData* data, CbPrefix&& cbPrefix, CbContext&& cbContext)
 {
 	C c;
 
-	BashRole bashRole = BashParser()(context);
+	BashParser::Answer bashCmdInfo = BashParser()(context);
+	BashRole bashRole = bashCmdInfo.bashRole;
 
 	if (bashRole == BashRole::LOCAL_BIN)
-	{
-		for (auto& p: fs::directory_iterator(data->bashChild.getBashCurrentDir()))
-		{
-			std::string filename = p.path().filename().string();
-			if (filename.compare(0, prefix.size(), prefix) == 0)
-				cbPrefix(filename, c);
-		}
-
-		// or if there is a path after the ./ use this path instead example ./../ TODO
-	}
+		complLocalFile(c, prefix, data, bashCmdInfo, std::forward<CbPrefix>(cbPrefix));
 
 	for (const auto& e : data->history)
 	{
@@ -58,14 +64,10 @@ C completion(const std::string& context, const std::string& prefix, CompletionDa
 	}
 
 	if (bashRole == BashRole::ARG)
+		complLocalFile(c, prefix, data, bashCmdInfo, std::forward<CbPrefix>(cbPrefix));
+
+	if (bashRole == BashRole::ARG_OPTION)
 	{
-		for (auto& p: fs::directory_iterator(data->bashChild.getBashCurrentDir()))
-		{
-			std::string filename = p.path().filename().string();
-			if (filename.compare(0, prefix.size(), prefix) == 0)
-				cbPrefix(filename, c);
-		}
-		// or if there is a path after use this path TODO
 		// read the man of the command uses if it begins with a - (if it exists) and extract the possibles options TODO
 	}
 

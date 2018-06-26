@@ -10,6 +10,7 @@ enum BashRole
 	PATH_BIN = 1,
 	LOCAL_BIN = 2,
 	ARG = 3,
+	ARG_OPTION = 4,
 	UNKNOWN = 0
 };
 
@@ -17,9 +18,19 @@ class BashParser
 {
 	using Chunk = std::pair<std::string, std::string>;
 	public:
+		struct Answer
+		{
+			Answer() = default;
+			Answer(BashRole br): bashRole(br) {}
+			Answer(BashRole br, const std::string& p): bashRole(br), path(p) {}
+
+			BashRole	bashRole = BashRole::UNKNOWN;
+			std::string	path;
+		};
+	public:
 		BashParser() = default;
 
-		BashRole	operator()(const std::string& line)
+		Answer	operator()(const std::string& line)
 		{
 			auto chunks = splitLineToChunks(line);
 			auto cmd = chunksToLastCmd(chunks);
@@ -31,12 +42,26 @@ class BashParser
 
 				auto str = cmd.front();
 				if (str.size() >= 2 && str[0] == '.' && str[1] == '/')
-					return BashRole::LOCAL_BIN;
+				{
+					std::string path = str;
+					while (!path.empty() && path.back() != '/')
+						path.pop_back();
+					return Answer(BashRole::LOCAL_BIN, path);
+				}
 				else
 					return BashRole::PATH_BIN;
 			}
 			else
-				return BashRole::ARG;
+			{
+				auto str = cmd.back();
+				if (str.front() == '-')
+					return BashRole::ARG_OPTION;
+
+				std::string path = str;
+				while (!path.empty() && path.back() != '/')
+					path.pop_back();
+				return Answer(BashRole::ARG, path);
+			}
 			return BashRole::UNKNOWN;
 		}
 
