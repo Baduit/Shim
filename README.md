@@ -23,14 +23,11 @@ shim -s bash -Np
 When Shim is started, the shortcuts are similar to other shells and the commands are the same as in the used shell.
 
 # How does it work?
-First it initialize the replxx library and the informations used in the hints, auto-completion and coloration.
-Then it creates a pipe (2 linked file descriptors), the father process will be the writer.
-After it creates a child process wich:
-- close the standard input so the shell i will start later won't read it and does not create conflict with the replexx library which will read the standard input the the father process.
-- redirect the read file descriptor of the pipe on the standard input, so when the father will write in the pipe it will be read by the shell.
+When executed, Shim initializes the replxx library and defines the information used for hints, auto-completion and coloration. It then creates a pipeline (2 linked file descriptors), the main process will be the writer. After it creates a child process which:
+- closes the standard input so that conflicts are avoided between the replxx library and the used shell reading on that same input.
+- redirects the read file descriptor of the pipe on the standard input, so that when the main process will write in the pipe it will be read by the shell.
 - start a shell
-Then the father will read the standard input, put some color etc and when the user confirm a line it will write it in the pipe.
-In order to synchronize the 2 process, the father process will also write a command saying to send a signal (SIGUSR1 using kill) to himself and then wait until it receives this signal to be sure to wait the end of the command.
+The main process will read from the standard input, make some line style edition and wait for the user to confirm a line to write it in the pipe. In order to synchronize both process, the main process will also write a command to trigger himself with a signal (SIGUSR1 using the kill command) and then wait until it receives this signal to be sure to wait until the end of the command.
 
 # Future
 - Hints/auto-completion more accurate.
