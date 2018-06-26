@@ -115,15 +115,8 @@ class CallbackData
 		{
 			_regexColor = {
 					{"\\`", cl::BRIGHTCYAN},
-					{"\\'", cl::BRIGHTBLUE},
-					{"\\\"", cl::BRIGHTBLUE},
-					{"\\-", cl::BRIGHTBLUE},
-					{"\\+", cl::BRIGHTBLUE},
-					{"\\=", cl::BRIGHTBLUE},
-					{"\\/", cl::BRIGHTBLUE},
-					{"\\*", cl::BRIGHTBLUE},
-					{"\\^", cl::BRIGHTBLUE},
-					{"\\.", cl::BRIGHTMAGENTA},
+					{"\\'", cl::BRIGHTCYAN},
+					{"\\\"", cl::BRIGHTCYAN},
 					{"\\(", cl::BRIGHTMAGENTA},
 					{"\\)", cl::BRIGHTMAGENTA},
 					{"\\[", cl::BRIGHTMAGENTA},
@@ -141,9 +134,11 @@ class CallbackData
 					{"[\\-|+]{0,1}[0-9]*\\.[0-9]+", cl::YELLOW},
 					{"[\\-|+]{0,1}[0-9]+e[\\-|+]{0,1}[0-9]+", cl::YELLOW},
 
-					{"\".*?\"", cl::BRIGHTGREEN},
-					{"\'.*?\'", cl::BRIGHTGREEN},
-					{"`.*?`", cl::BRIGHTGREEN},
+					{"\".*?\"", cl::BRIGHTCYAN},
+					{"\'.*?\'", cl::BRIGHTCYAN},
+					{"`.*?`", cl::BRIGHTCYAN},
+
+					{"\\B\\-\\w+", cl::GREEN}
 				};
 		}
 
