@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "replxx.hxx"
+#include <replxx.hxx>
 
 class CommandLineHandler
 {

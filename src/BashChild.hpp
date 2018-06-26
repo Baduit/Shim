@@ -7,6 +7,7 @@
 #include <sstream>
 #include <signal.h>
 #include <string>
+#include <fstream>
 
 class BashChild
 {
@@ -28,7 +29,6 @@ class BashChild
 				system(shell.c_str());
 				close(_pipefd[0]);
 				exit(EXIT_SUCCESS);
-				close(_pipefd[0]);
 			}
 			else
 			{
@@ -73,6 +73,16 @@ class BashChild
 			if (waitpid(_cpid, &bashExitStatus, 0) == -1)
 				return -1;
 			return bashExitStatus;
+		}
+
+		std::string		getBashCurrentDir()
+		{
+			(*this) << "pwd > /tmp/shim_pwd.txt\n";
+			waitEndBashCommand();
+			std::ifstream pwdFile("/tmp/shim_pwd.txt");
+			std::string path;
+			std::getline(pwdFile, path);
+			return path;
 		}
 
 		const pid_t		getCpid() const { return _cpid; }

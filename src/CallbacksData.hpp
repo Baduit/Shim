@@ -9,43 +9,62 @@
 
 namespace fs = std::experimental::filesystem;
 
+using Strings = std::vector<std::string>;
+
+struct CompletionData
+{
+	CompletionData(BashChild& bc): bashChild(bc) {}
+
+	BashChild&	bashChild;
+	Strings		history;
+	Strings		aliases;
+	Strings		binaries;
+};
+
+enum BinariesPathCompletion
+{
+	NORMAL,
+	ALL,
+	NONE
+};
+
 class CallbackData
 {
 	using cl = Replxx::Color;
 	using Colorations = std::vector<std::pair<std::string, cl>>;
-	using Strings = std::vector<std::string>;
 
 	public:
-		CallbackData(CommandLineHandler& clh, bool useHistory = true, bool useAllPaths = false)
+		CallbackData(CommandLineHandler& clh, BashChild& bashChild, bool useHistory = true, BinariesPathCompletion useAllPaths = NORMAL): _completionData(bashChild)
 		{
 			setExpressions(clh, useHistory, useAllPaths);
 			setColors();
 		}
 
-		Colorations	getColorations() const { return _regexColor; }
-		Strings		getKnownExpressions() const { return _knownExpressions; }
+		Colorations			getColorations() const { return _regexColor; }
+		CompletionData		getCompletionData() const { return _completionData; }
 
 	private:
 		void	setExpressions(CommandLineHandler& clh, bool useHistory, bool useAllPaths)
 		{
-			_knownExpressions = {
+			_completionData.binaries = {
 				"exit", "quit"
 			};
 
 			if (useHistory)
 			{
-				auto history = clh.getHistory();
-				_knownExpressions.insert(_knownExpressions.end(), history.rbegin(), history.rend());
+				_completionData.history = clh.getHistory();
 			}
 
-			if (useAllPaths) 
-			{
-				auto binaries = getPathBinaries();
-				_knownExpressions.insert(_knownExpressions.end(), binaries.rbegin(), binaries.rend());
-			}
+			Strings paths;
+			if (useAllPaths == BinariesPathCompletion::NORMAL)
+				paths = {"/bin", "/usr/bin"};
+			else if (useAllPaths == BinariesPathCompletion::ALL) 
+				paths = getEnvPath();
+			auto binaries = getPathBinaries(paths);
+			_completionData.binaries.insert(_completionData.binaries.end(), binaries.rbegin(), binaries.rend());
 		}
 
-		Strings	getPathBinaries()
+		Strings	getEnvPath()
 		{
 			char* path = secure_getenv("PATH");
 			Strings	paths;
@@ -62,7 +81,11 @@ class CallbackData
 					pathToPush += *path;
 				path++;
 			}
+			return paths;
+		}
 
+		Strings	getPathBinaries(const Strings& paths)
+		{
 			Strings binaries;
 			for (const auto& p: paths)
 			{
@@ -120,6 +143,6 @@ class CallbackData
 		}
 
 	private:
-		Colorations	_regexColor;
-		Strings		_knownExpressions;
+		CompletionData		_completionData;
+		Colorations			_regexColor;
 };

@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 {
 	std::string shellCmd = "bash -sl";
 	bool useHistory = true;
-	bool useAllPaths = false;
+	BinariesPathCompletion useAllPaths = BinariesPathCompletion::NORMAL;
 
 	for (int i = 1; i < argc; ++i)
 	{
@@ -27,22 +27,24 @@ int main(int argc, char **argv)
 
 		if ((arg[0] == '-' && std::find(arg.begin(), arg.end(), 'N') != arg.end()) || (arg == "--no-history"))
 			useHistory = false;
-		
-		if ((arg[0] == '-' && std::find(arg.begin(), arg.end(), 'p') != arg.end()) || (arg == "--paths"))
-			useAllPaths = true;
+		if (arg == "--paths=none")
+			useAllPaths = BinariesPathCompletion::NONE;
+		if (arg == "--paths=all")
+			useAllPaths = BinariesPathCompletion::ALL;
+
 	}
 
 	BashChild bashChild(shellCmd);
 	std::string historyFilePath = secure_getenv("HOME");
 	CommandLineHandler clh(historyFilePath + "/.shim_history", 1000, 256, 5);
-	CallbackData cbData(clh, useHistory, useAllPaths);
+	CallbackData cbData(clh, bashChild, useHistory, useAllPaths);
 
-	auto knownExpressions = cbData.getKnownExpressions();
+	auto completionData = cbData.getCompletionData();
 	auto regex_color = cbData.getColorations();
 
-	clh.setCompletionCallback(hook_completion, static_cast<void*>(&knownExpressions));
+	clh.setCompletionCallback(hook_completion, static_cast<void*>(&completionData));
 	clh.setHighlighterCallback(hook_color, static_cast<void*>(&regex_color));
-	clh.setHintCallback(hook_hint, static_cast<void*>(&knownExpressions));
+	clh.setHintCallback(hook_hint, static_cast<void*>(&completionData));
 
 
 	std::string input;
@@ -63,5 +65,5 @@ int main(int argc, char **argv)
 			continue;
 		}
 	}
-	std::cout << std::endl << "Exiting Shimon" << std::endl;
+	std::cout << std::endl << "Exiting Shim" << std::endl;
 }
