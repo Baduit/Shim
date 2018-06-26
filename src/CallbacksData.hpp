@@ -6,6 +6,7 @@
 		
 
 #include "CommandLineHandler.hpp"
+#include "CmdOptions.hpp"
 
 namespace fs = std::experimental::filesystem;
 
@@ -19,6 +20,7 @@ struct CompletionData
 	Strings		history;
 	Strings		aliases;
 	Strings		binaries;
+	CmdOptions	cmdOptions;
 };
 
 enum BinariesPathCompletion
@@ -40,8 +42,8 @@ class CallbackData
 			setColors();
 		}
 
-		Colorations			getColorations() const { return _regexColor; }
-		CompletionData		getCompletionData() const { return _completionData; }
+		Colorations&			getColorations() { return _regexColor; }
+		CompletionData&		getCompletionData() { return _completionData; }
 
 	private:
 		void	setExpressions(CommandLineHandler& clh, bool useHistory, bool useAllPaths)
@@ -141,6 +143,7 @@ class CallbackData
 
 					{"\".*?\"", cl::BRIGHTGREEN},
 					{"\'.*?\'", cl::BRIGHTGREEN},
+					{"`.*?`", cl::BRIGHTGREEN},
 				};
 		}
 

@@ -23,9 +23,11 @@ class BashParser
 			Answer() = default;
 			Answer(BashRole br): bashRole(br) {}
 			Answer(BashRole br, const std::string& p): bashRole(br), path(p) {}
+			Answer(BashRole br, const std::string& p, const std::string& b): bashRole(br), path(p), bin(b) {}
 
 			BashRole	bashRole = BashRole::UNKNOWN;
 			std::string	path;
+			std::string	bin;
 		};
 	public:
 		BashParser() = default;
@@ -38,7 +40,7 @@ class BashParser
 			if (cmd.size() <= 1)
 			{
 				if (cmd.size() == 0)
-					return BashRole::PATH_BIN;
+					return Answer(BashRole::PATH_BIN);
 
 				auto str = cmd.front();
 				if (str.size() >= 2 && str[0] == '.' && str[1] == '/')
@@ -49,20 +51,22 @@ class BashParser
 					return Answer(BashRole::LOCAL_BIN, path);
 				}
 				else
-					return BashRole::PATH_BIN;
+				{
+					return Answer(BashRole::PATH_BIN, "", str);
+				}
 			}
 			else
 			{
 				auto str = cmd.back();
 				if (str.front() == '-')
-					return BashRole::ARG_OPTION;
+					return Answer(BashRole::ARG_OPTION, "", cmd.front());
 
 				std::string path = str;
 				while (!path.empty() && path.back() != '/')
 					path.pop_back();
 				return Answer(BashRole::ARG, path);
 			}
-			return BashRole::UNKNOWN;
+			return Answer(BashRole::UNKNOWN);
 		}
 
 	private:

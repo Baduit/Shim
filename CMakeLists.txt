@@ -8,6 +8,9 @@ project(ShimProject)
 
 add_definitions(-std=c++17 )
 
+
+set (CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -pthread)
+
 set(SRCS
     src/main.cpp
     )

@@ -39,8 +39,8 @@ int main(int argc, char **argv)
 	CommandLineHandler clh(historyFilePath + "/.shim_history", 1000, 256, 5);
 	CallbackData cbData(clh, bashChild, useHistory, useAllPaths);
 
-	auto completionData = cbData.getCompletionData();
-	auto regex_color = cbData.getColorations();
+	auto& completionData = cbData.getCompletionData();
+	auto& regex_color = cbData.getColorations();
 
 	clh.setCompletionCallback(hook_completion, static_cast<void*>(&completionData));
 	clh.setHighlighterCallback(hook_color, static_cast<void*>(&regex_color));

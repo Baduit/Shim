@@ -1,3 +1,5 @@
+#pragma once
+
 #include <utility>
 #include <string>
 #include <vector>
@@ -59,6 +61,7 @@ C completion(const std::string& context, const std::string& prefix, CompletionDa
 			if (prefix.size() >= 2 || (!prefix.empty()))
 				if (e.compare(0, prefix.size(), prefix) == 0)
 					cbPrefix(e, c);
+			data->cmdOptions(bashCmdInfo.bin);
 		}
 		
 		for (const auto& e : data->aliases)
@@ -74,7 +77,17 @@ C completion(const std::string& context, const std::string& prefix, CompletionDa
 
 	if (bashRole == BashRole::ARG_OPTION)
 	{
-		// read the man of the command uses if it begins with a - (if it exists) and extract the possibles options TODO
+		data->cmdOptions(bashCmdInfo.bin);
+		auto [optionsMono, optionsDouble] = data->cmdOptions.get();
+
+		for (const auto& e: optionsMono)
+			if (e.compare(0, prefix.size(), prefix) == 0)
+				cbPrefix(e, c);
+
+		for (const auto& e: optionsDouble)
+			if (prefix.size() >= 2 || (!prefix.empty()))
+				if (e.compare(0, prefix.size(), prefix) == 0)
+					cbPrefix(e, c);
 	}
 
 	return c;

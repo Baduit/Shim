@@ -98,6 +98,7 @@ class BashChild
 			return aliases;
 		}
 
+
 		const pid_t		getCpid() const { return _cpid; }
 	private:
 		pid_t	_cpid;
