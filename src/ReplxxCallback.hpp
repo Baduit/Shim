@@ -83,11 +83,16 @@ C completion(const std::string& context, const std::string& prefix, CompletionDa
 		for (const auto& e: optionsMono)
 			if (e.compare(0, prefix.size(), prefix) == 0)
 				cbPrefix(e, c);
+	}
+
+	if (bashRole == BashRole::ARG_OPTION_DOUBLE)
+	{
+		data->cmdOptions(bashCmdInfo.bin);
+		auto [optionsMono, optionsDouble] = data->cmdOptions.get();
 
 		for (const auto& e: optionsDouble)
-			if (prefix.size() >= 2 || (!prefix.empty()))
-				if (e.compare(0, prefix.size(), prefix) == 0)
-					cbPrefix(e, c);
+			if (e.compare(0, prefix.size(), prefix) == 0)
+				cbPrefix(e, c);
 	}
 
 	return c;

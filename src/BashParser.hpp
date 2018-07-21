@@ -11,6 +11,7 @@ enum BashRole
 	LOCAL_BIN = 2,
 	ARG = 3,
 	ARG_OPTION = 4,
+	ARG_OPTION_DOUBLE = 5,
 	UNKNOWN = 0
 };
 
@@ -59,7 +60,12 @@ class BashParser
 			{
 				auto str = cmd.back();
 				if (str.front() == '-')
-					return Answer(BashRole::ARG_OPTION, "", cmd.front());
+				{
+					if (str.size() > 1 && str[1] == '-')
+						return Answer(BashRole::ARG_OPTION_DOUBLE, "", cmd.front());
+					else
+						return Answer(BashRole::ARG_OPTION, "", cmd.front());
+				}
 
 				std::string path = str;
 				while (!path.empty() && path.back() != '/')
