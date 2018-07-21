@@ -30,6 +30,8 @@ class CmdOptions
 				system(std::string("man 1 " + this->getName() + " 2>/dev/null | grep - > /tmp/shim_man.txt\n").c_str());
 				std::ifstream pwdFile("/tmp/shim_man.txt");
 
+				this->clear();
+
 				std::string oriStr;;
 				while (std::getline(pwdFile, oriStr))
 				{
@@ -68,6 +70,13 @@ class CmdOptions
 				s.erase(0, 1);
 				_optionsMono.insert(s);
 			}
+		}
+
+		void					clear()
+		{
+			std::lock_guard lock(_mutex);
+			_optionsMono.clear();
+			_optionsDouble.clear();
 		}
 
 		auto	get()
