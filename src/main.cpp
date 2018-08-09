@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <cstdlib>
 
 #include <replxx.hxx>
 using Replxx = replxx::Replxx;
@@ -15,6 +16,7 @@ using Replxx = replxx::Replxx;
 int main(int argc, char **argv)
 {
 	std::string shellCmd = "bash -sl";
+	int nbHintLines = 8;
 	bool useHistory = true;
 	BinariesPathCompletion useAllPaths = BinariesPathCompletion::NORMAL;
 
@@ -32,11 +34,14 @@ int main(int argc, char **argv)
 		if (arg == "--paths=all")
 			useAllPaths = BinariesPathCompletion::ALL;
 
+		if (((arg[0] == '-' && std::find(arg.begin(), arg.end(), 'h') != arg.end()) || (arg == "--hints")) && i + 1 < argc)
+			nbHintLines = atoi(argv[i + 1]); // replace this with the c++ function from std
+
 	}
 
 	BashChild bashChild(shellCmd);
 	std::string historyFilePath = secure_getenv("HOME");
-	CommandLineHandler clh(historyFilePath + "/.shim_history", 1000, 256, 5);
+	CommandLineHandler clh(historyFilePath + "/.shim_history", 1000, 1024, nbHintLines);
 	CallbackData cbData(clh, bashChild, useHistory, useAllPaths);
 
 	auto& completionData = cbData.getCompletionData();
@@ -48,6 +53,7 @@ int main(int argc, char **argv)
 
 
 	std::string input;
+	clh.setPrompt(bashChild.getBashCurrentDir() + "$ ");
 	while (clh >> input)
 	{
 		if (input.empty())
@@ -62,6 +68,7 @@ int main(int argc, char **argv)
 			bashChild << input << "\n";
 			bashChild.waitEndBashCommand();
 			clh.addToHistory(input);
+			clh.setPrompt(bashChild.getBashCurrentDir() + "$ ");
 			continue;
 		}
 	}

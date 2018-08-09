@@ -15,7 +15,8 @@ There is some options you can use:
 - -s or --shell followed by the name of the shell and arguments (default is "bash -sl")
 - -N or --no-history disables history searches for hints and completion
 - --paths=none disables Shim to use the files in '/bin' and '/usr/bin' "PATH" in the hints and the completion
--  --paths=all enables Shim to use all files in the paths contained in the PATH environment variable for hints and completion
+- --paths=all enables Shim to use all files in the paths contained in the PATH environment variable for hints and completion
+- -h or --hints followed by the number of line used by the hints
 
 Example:
 shim -s bash -Np
