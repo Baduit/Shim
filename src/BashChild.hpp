@@ -10,6 +10,10 @@
 #include <fstream>
 #include <vector>
 
+#include <boost/process.hpp>
+
+namespace bp = boost::process;
+
 class BashChild
 {
 	public:
@@ -27,7 +31,7 @@ class BashChild
 				close(_pipefd[1]);
 				close(0);
 				dup2(_pipefd[0], 0);
-				system(shell.c_str());
+				std::system(shell.c_str());
 				close(_pipefd[0]);
 				exit(EXIT_SUCCESS);
 			}

@@ -27,7 +27,7 @@ class CmdOptions
 				return;
 			
 			_thread = std::thread([&]{
-				system(std::string("man 1 " + this->getName() + " 2>/dev/null | grep - > /tmp/shim_man.txt\n").c_str());
+				std::system(std::string("man 1 " + this->getName() + " 2>/dev/null | grep - > /tmp/shim_man.txt\n").c_str());
 				std::ifstream pwdFile("/tmp/shim_man.txt");
 
 				this->clear();
