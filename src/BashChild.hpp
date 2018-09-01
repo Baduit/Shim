@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unistd.h>
+#include <unistd.h> // the goal is to remove this header because it not cross platorm
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <stdexcept>
@@ -17,6 +17,7 @@ namespace bp = boost::process;
 class BashChild
 {
 	public:
+		// boost process
 		BashChild(const std::string& shell = "bash -sl")
 		{
 			if (pipe(_pipefd) == -1)
@@ -41,6 +42,7 @@ class BashChild
 			}
 		}
 
+		// boost process
 		~BashChild() { waitExit(); }
 
 		BashChild(const BashChild&) = delete;
@@ -49,6 +51,7 @@ class BashChild
 		BashChild& 		operator=(const BashChild&) = delete;
 		BashChild& 		operator=(BashChild&&) = default;
 
+		// boost process
 		void			writeToBash(const std::string& message)
 		{
 			write(_pipefd[1], message.c_str(), message.length());
@@ -63,12 +66,14 @@ class BashChild
 			return *this;
 		}
 
+		// create a little helper program in c++ to make this portable because this won't work on powershell & cmd.exe
 		void			waitEndBashCommand()
 		{
 			*this << "kill -s SIGUSR1 " << getpid() <<" \n";
 			pause();
 		}
 
+		// boost process
 		int				waitExit()
 		{
 			if (_cpid <= 0)
@@ -80,6 +85,8 @@ class BashChild
 			return bashExitStatus;
 		}
 
+		// create a little helper program in c++ to make this portable because this won't work on powershell & cmd.exe
+		// use env variable instead of tmp_file would be better i think
 		std::string		getBashCurrentDir()
 		{
 			(*this) << "pwd > /tmp/shim_pwd.txt\n";
@@ -90,6 +97,8 @@ class BashChild
 			return path;
 		}
 
+		// add a try catch in case this does not work, improve the parsing to make this work on powershell
+		// use env variable instead of tmp_file would be better i think
 		std::vector<std::string>		getBashAliases()
 		{
 			(*this) << "alias > /tmp/shim_aliases.txt\n";
@@ -102,7 +111,7 @@ class BashChild
 			return aliases;
 		}
 
-
+		// won't be need with boost process
 		const pid_t		getCpid() const { return _cpid; }
 	private:
 		pid_t	_cpid;
